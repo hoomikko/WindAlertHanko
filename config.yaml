@@ -1,64 +1,41 @@
-# Kopioi tämä tiedosto nimelle config.yaml ja muokkaa omat asetuksesi.
-# Salaisuudet (tokenit, salasanat, puhelinnumerot) EIVÄT tule tähän
-# tiedostoon sellaisenaan - viittaa niihin ${YMPARISTOMUUTTUJA}-muodossa
-# ja aseta oikeat arvot .env-tiedostoon (paikallinen ajo) tai GitHubin
-# repo Secrets -asetuksiin (GitHub Actions -ajo). Näin config.yaml on aina
-# turvallista committoida julkiseen gittiin.
-
 location:
-  name: "Tampere, Siilinkari"  # näkyy viesteissä
-  latitude: 61.5177
-  longitude: 23.7538
-  fmi_station_id: 101311      # Tampere Siilinkari -asema (siinä on tuulimittari)
+  name: "Hanko, Tulliniemi"
+  latitude: 59.8086
+  longitude: 22.9122
+  fmi_station_id: 100946
 
 wind:
-  min_speed_ms: 6.0           # alaraja, josta lähtien tuuli on "ajokelpoista"
-  max_speed_ms: 15.0          # yläraja - liian kova tuuli ei myöskään hälytä
-  direction_filter: []        # esim. ["SW", "W", "NW"] - tyhjä = kaikki suunnat kelpaavat
-                               # TÄRKEÄÄ TURVALLISUUDEN KANNALTA rannikolla/järvellä:
-                               # rajaa pois mantereesta pois päin puhaltavat (offshore) suunnat.
+  min_speed_ms: 7.0
+  max_speed_ms: 10.0
+  direction_filter: ["W", "NW"]
   hysteresis:
-    trigger_margin_ms: 0.5    # hälytys vasta kun tuuli ylittää min_speed_ms + tämä
-    release_margin_ms: 1.0    # "tuuli loppui" vasta kun alitetaan min_speed_ms - tämä
-    min_minutes_above: 10     # estää hälytyksen yksittäisestä puuskasta
-    reminder_interval_minutes: 120  # muistutus "vielä ajokelpoista" tämän välein; 0 = pois päältä
+    trigger_margin_ms: 0.0
+    release_margin_ms: 0.5
+    min_minutes_above: 10
+    reminder_interval_minutes: 120
 
 forecast:
   enabled: true
   hours_ahead: 6
 
 chart:
-  enabled: true             # v0.3: liitä graafi hälytysviestiin (Telegram/Email)
-  lookback_hours: 8          # kuinka monen tunnin historia näytetään graafissa
+  enabled: false
+  lookback_hours: 8
 
 schedule:
-  active_hours: "6-22"        # ei hälytyksiä yöllä (24h-muodossa, paikallinen aika)
-  poll_interval_minutes: 10   # kuinka usein run_alert-workflow/cron ajetaan (määritellään myös cronissa/Actionsissa erikseen)
+  active_hours: "0-23"
+  poll_interval_minutes: 10
 
 notifications:
   channels:
-    - type: telegram
+    - type: ntfy
       enabled: true
-      bot_token: "${TELEGRAM_BOT_TOKEN}"
-      chat_id: "${TELEGRAM_CHAT_ID}"
-
-    - type: email
-      enabled: false
-      smtp_host: "smtp.gmail.com"
-      smtp_port: 587
-      smtp_user: "${SMTP_USER}"
-      smtp_password: "${SMTP_PASSWORD}"
-      to: "sinun.osoitteesi@example.com"
-
-    - type: ntfy              # v0.3: ilmainen push-ilmoitus puhelimeen, ei API-avainta
-      enabled: false
-      topic: "wingfoil-rautalampi-x7q2f"   # keksi pitkä, arvaamaton oma topic!
-      server: "https://ntfy.sh"            # tai oma self-hosted ntfy-palvelin
-
-    # WhatsApp-tuki tulee community-pluginina myöhemmin (ks. docs/adding-a-notifier.md).
+      topic: "${NTFY_TOPIC}"
+      server: "https://ntfy.sh"
 
 telemetry:
-  enabled: false              # opt-in, katso PRIVACY.md ja docs/telemetry.md ennen käyttöönottoa
-  endpoint: ""                # esim. oma Cloudflare Worker -osoitteesi, tyhjä = ei lähetetä mitään
+  enabled: false
+  endpoint: ""
 
 state_path: "state/wingfoil_alert_state.json"
+  
