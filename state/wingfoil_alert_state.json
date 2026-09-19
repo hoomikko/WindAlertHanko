@@ -3,8 +3,8 @@
   "last_alert_at": "2026-08-31T21:54:00+00:00",
   "recent_readings": [
     {
-      "ts": "2026-09-19T09:00:00+00:00",
-      "speed": 11.6
+      "ts": "2026-09-19T13:00:00+00:00",
+      "speed": 10.8
     }
   ],
   "last_reminder_at": null
